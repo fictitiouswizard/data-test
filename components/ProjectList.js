@@ -1,42 +1,96 @@
 import React from "react";
-import { View, Text, StyleSheet, SafeAreaView, FlatList } from "react-native";
+import ReactNative, {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  FlatList,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import {
+  faHeart,
+  faStar,
+  faHashtag,
+  faCalendar,
+  faUserCircle,
+} from "@fortawesome/free-solid-svg-icons";
 
 import { colors } from "../constants";
 
 const ProjectItem = (props) => {
   const { project } = props;
   return (
-    <View style={styles.projectCard}>
-      <Text style={styles.text}>{project.projectName}</Text>
-      <Text style={{ color: colors.text }}>{project.user.name}</Text>
-      <Text style={{ color: colors.text }}>{project.category.name}</Text>
-      <Text style={{ color: colors.text }}>{project.eventName}</Text>
-      <Text style={{ color: colors.text }}>
-        <FontAwesomeIcon icon="heart" />
-        {project.hearts}
-      </Text>
-      <Text style={{ color: colors.text }}>
-        <FontAwesomeIcon icon="star" />
-        {project.stars}
-      </Text>
-    </View>
+    <TouchableOpacity onPress={() => props.onPress(project.projectName)}>
+      <View style={styles.projectCard}>
+        <Text style={styles.text}>{project.projectName}</Text>
+        <TouchableOpacity
+          style={{ ...styles.iconView, marginRight: "auto" }}
+          onPress={() => props.onPress(project.user.name)}
+        >
+          <FontAwesomeIcon
+            style={{ color: colors.day9Orange }}
+            icon={faUserCircle}
+          />
+          <Text style={{ color: colors.day9Orange }}>{project.user.name}</Text>
+        </TouchableOpacity>
+        <View>
+          <TouchableOpacity
+            style={{ ...styles.iconView, marginRight: "auto" }}
+            onPress={() => props.onPress(project.category.name)}
+          >
+            <FontAwesomeIcon
+              style={{ color: colors.day9Orange }}
+              icon={faHashtag}
+            />
+            <Text style={{ color: colors.day9Orange }}>
+              {project.category.name}
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={{ ...styles.iconView, marginRight: "auto" }}>
+          <FontAwesomeIcon style={{ color: colors.text }} icon={faCalendar} />
+          <Text style={{ color: colors.text }}>{project.eventName}</Text>
+        </View>
+        <View style={{ flexDirection: "row" }}>
+          <View style={styles.iconView}>
+            <FontAwesomeIcon style={{ color: colors.text }} icon={faHeart} />
+            <Text style={{ color: colors.text, marginLeft: 5 }}>
+              {project.hearts}
+            </Text>
+          </View>
+          <View style={styles.iconView}>
+            <FontAwesomeIcon style={{ color: colors.text }} icon={faStar} />
+            <Text style={{ color: colors.text, marginLeft: 5 }}>
+              {project.stars}
+            </Text>
+          </View>
+        </View>
+      </View>
+    </TouchableOpacity>
   );
 };
 
 const ProjectList = (props) => {
+  const onPressHandler = (alertText) => {
+    Alert.alert(alertText);
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <SafeAreaView style={styles.content}>
         <FlatList
           style={{ height: "100%" }}
           data={props.projects}
-          renderItem={({ item }) => <ProjectItem project={item} />}
+          renderItem={({ item }) => (
+            <ProjectItem project={item} onPress={onPressHandler} />
+          )}
           keyExtractor={(item, index) => item.projectId}
           onEndReached={props.endReachedHandler}
           refreshing={props.loadingAdditionalProjects}
-          onEndReachedThreshold={3}
+          //onEndReachedThreshold={5}
         />
       </SafeAreaView>
     </View>
@@ -53,10 +107,16 @@ const styles = StyleSheet.create({
   text: {
     color: colors.day9Orange,
     //fontFamily: "Tungsten-Bold",
-    fontSize: 15,
+    fontSize: 20,
   },
   content: {
     flex: 1,
+  },
+  iconView: {
+    flexDirection: "row",
+    margin: 5,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 
