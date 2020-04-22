@@ -1,5 +1,5 @@
 import React from "react";
-import ReactNative, {
+import {
   View,
   Text,
   StyleSheet,
