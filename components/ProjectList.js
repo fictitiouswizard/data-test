@@ -5,7 +5,6 @@ import AppContext from "../AppContext";
 import ProjectItem from "./ProjectItem";
 import { colors } from "../constants";
 import { TextInput } from "react-native-gesture-handler";
-import { color } from "react-native-reanimated";
 
 const ProjectList = ({ navigation }) => {
   const {
