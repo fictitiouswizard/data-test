@@ -7,7 +7,7 @@ import {
   faStar,
   faHashtag,
   faCalendar,
-  faUserCircle
+  faUserCircle,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { colors } from "../constants";
@@ -17,7 +17,14 @@ class ProjectItem extends React.PureComponent {
     const { project } = this.props;
 
     return (
-      <TouchableOpacity onPress={() => this.props.onPress(project.projectName)}>
+      <TouchableOpacity
+        onPress={() =>
+          this.props.onPress({
+            event: "project",
+            data: { projectId: project.projectId },
+          })
+        }
+      >
         <View style={styles.projectCard}>
           <Text style={styles.text}>{project.projectName}</Text>
           <TouchableOpacity
@@ -75,18 +82,18 @@ const styles = StyleSheet.create({
     backgroundColor: colors.secondaryBackground,
     margin: 10,
     padding: 10,
-    borderRadius: 10
+    borderRadius: 10,
   },
   text: {
     color: colors.day9Orange,
-    fontSize: 20
+    fontSize: 20,
   },
   iconView: {
     flexDirection: "row",
     margin: 5,
     alignItems: "center",
-    justifyContent: "center"
-  }
+    justifyContent: "center",
+  },
 });
 
 export default ProjectItem;

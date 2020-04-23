@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Button, TouchableOpacity } from "react-native";
-import { AppLoading } from "expo";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useFonts } from "@use-expo/font";
 import { fetchProjects } from "./api";
 import ProjectList from "./components/ProjectList";
+import ProjectDetails from "./components/ProjectDetails";
+import Header from "./components/Header";
 import { colors } from "./constants";
+import AppContext from "./AppContext";
 
 const Stack = createStackNavigator();
-const AppContext = React.createContext({});
 
 export default function App() {
   const [projects, setProjects] = useState([]);
   const [pageNumber, setPageNumber] = useState(1);
   const [loadingProjects, setLoadingProjects] = useState(true);
+  const [searchString, setSearchString] = useState("");
   const [loadingAdditionalProjects, setLoadingAdditionalProjects] = useState(
     false
   );
@@ -26,11 +28,11 @@ export default function App() {
   });
 
   useEffect(() => {
-    fetchProjects(pageNumber).then((projects) => {
+    fetchProjects(pageNumber, searchString).then((projects) => {
       setProjects(projects);
       setLoadingProjects(false);
     });
-  }, [loadingProjects]);
+  }, [loadingProjects, searchString]);
 
   const endReachedHandler = ({ distanceFromEnd }) => {
     const nextPage = pageNumber + 1;
@@ -44,6 +46,10 @@ export default function App() {
     setDistance(distanceFromEnd);
   };
 
+  const searchHandler = (text) => {
+    setSearchString(text);
+  };
+
   if (!isLoaded || loadingProjects) {
     return (
       <View style={styles.header}>
@@ -52,24 +58,34 @@ export default function App() {
     );
   } else {
     return (
-      <AppContext.Provider>
+      <AppContext.Provider
+        value={{
+          projects,
+          endReachedHandler,
+          loadingAdditionalProjects,
+          searchHandler,
+          searchString,
+        }}
+      >
         <NavigationContainer>
-          <View style={styles.container}>
-            <View style={styles.header}>
-              <Text style={{ fontFamily: "Tungsten-Bold", fontSize: 40 }}>
-                DAY[9]TV DK30
-              </Text>
-            </View>
-            <View style={styles.content}>
-              <Stack.Navigator>
-                <ProjectList
-                  projects={projects}
-                  endReachedHandler={endReachedHandler}
-                  loadingAdditionalProjects={loadingAdditionalProjects}
-                />
-              </Stack.Navigator>
-            </View>
-          </View>
+          <Stack.Navigator
+            initialRouteName="ProjectList"
+            screenOptions={{
+              headerStyle: {
+                backgroundColor: colors.day9Orange,
+                height: 130,
+              },
+              headerTitle: "DAY[9]TV DK30",
+              headerTitleAlign: "center",
+              headerTitleStyle: {
+                fontFamily: "Tungsten-Bold",
+                fontSize: 40,
+              },
+            }}
+          >
+            <Stack.Screen name="ProjectList" component={ProjectList} />
+            <Stack.Screen name="ProjectDetails" component={ProjectDetails} />
+          </Stack.Navigator>
         </NavigationContainer>
       </AppContext.Provider>
     );
@@ -84,33 +100,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: "100%",
   },
-  header: {
-    flex: 1,
-    paddingTop: 30,
-    width: "100%",
-    backgroundColor: colors.day9Orange,
-    justifyContent: "center",
-    alignItems: "center",
-    fontFamily: "Tungsten-Bold",
-    fontSize: 40,
-  },
   content: {
     width: "100%",
     flex: 7,
-  },
-  Button: {
-    padding: 20,
-    width: "30%",
-    height: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#DDDDDD",
-    margin: "auto",
-  },
-  Buttons: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingTop: 20,
   },
 });
