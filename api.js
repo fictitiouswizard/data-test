@@ -2,20 +2,18 @@ import { parseString } from "react-native-xml2js";
 import { settings } from "./constants";
 import cheerio from "react-native-cheerio";
 
-const removeGarbage = (str) => {
+const removeGarbage = str => {
   return str.replace(/[\n\r\t]/g, "");
 };
 
 export function fetchProject(projectId) {
   return new Promise((resolve, reject) => {
-    console.log(projectId);
     const uri = "https://day9.tv/dk30/project/" + projectId;
-    console.log(uri);
     fetch(uri, {
-      redirect: "follow",
+      redirect: "follow"
     })
-      .then((response) => response.text())
-      .then((responseText) => {
+      .then(response => response.text())
+      .then(responseText => {
         responseText = removeGarbage(responseText);
         const nameSelector =
           "#view-project > div > div > div > div > div.col-12.col-md-8 > header > h1";
@@ -33,7 +31,9 @@ export function fetchProject(projectId) {
         const user = root(userSelector).text();
         const category = root(categorySelector).text();
         const event = settings.currentDK30;
-        const banner = root(eventSelector).text().split(" ");
+        const banner = root(eventSelector)
+          .text()
+          .split(" ");
         const hearts = banner[banner.length - 2];
         const stars = banner[banner.length - 1];
         const description = root(descriptionSelector).html();
@@ -58,10 +58,10 @@ export function fetchProject(projectId) {
               return {
                 user: {
                   name: username,
-                  location: userLocation,
+                  location: userLocation
                 },
                 timeSpan: timeSpan,
-                content: content,
+                content: content
               };
             })
             .toArray();
@@ -75,7 +75,7 @@ export function fetchProject(projectId) {
           hearts,
           stars,
           description,
-          updateCards,
+          updateCards
         });
       });
   });
@@ -89,19 +89,19 @@ export function fetchProjects(pageNumber, searchString = "") {
         "?search=" +
         searchString,
       {
-        redirect: "follow",
+        redirect: "follow"
       }
     )
-      .then((response) => {
+      .then(response => {
         const responseText = response.text();
         return responseText;
       })
-      .then((responseText) => {
+      .then(responseText => {
         let resultXml = "<result>" + responseText + "</result>";
         resultXml = removeGarbage(resultXml);
 
         parseString(resultXml, (err, result) => {
-          let projects = result.result.ul[0].li.map((item) => {
+          let projects = result.result.ul[0].li.map(item => {
             let eventName = removeGarbage(
               item.span[0]._ ? item.span[0]._ : settings.currentDK30
             );
@@ -116,19 +116,19 @@ export function fetchProjects(pageNumber, searchString = "") {
               eventName: eventName,
               user: {
                 name: removeGarbage(item.span[0].a[0]._),
-                location: item.span[0].a[0].$.href,
+                location: item.span[0].a[0].$.href
               },
               category: {
                 name: item.span[0].a[1]._,
-                location: item.span[0].a[1].$.href,
+                location: item.span[0].a[1].$.href
               },
               hearts: hearts,
-              stars: stars,
+              stars: stars
             };
           });
           resolve(projects);
         });
       })
-      .catch((error) => reject(error));
+      .catch(error => reject(error));
   });
 }
