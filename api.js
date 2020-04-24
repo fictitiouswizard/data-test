@@ -1,4 +1,3 @@
-import { parseString } from "react-native-xml2js";
 import { settings } from "./constants";
 import cheerio from "react-native-cheerio";
 
@@ -77,7 +76,8 @@ export function fetchProject(projectId) {
           description,
           updateCards,
         });
-      });
+      })
+      .catch((err) => reject(err));
   });
 }
 
@@ -100,34 +100,40 @@ export function fetchProjects(pageNumber, searchString = "") {
         let resultXml = "<result>" + responseText + "</result>";
         resultXml = removeGarbage(resultXml);
 
-        parseString(resultXml, (err, result) => {
-          let projects = result.result.ul[0].li.map((item) => {
-            let eventName = removeGarbage(
-              item.span[0]._ ? item.span[0]._ : settings.currentDK30
-            );
-            let [hearts, stars] = removeGarbage(item.span[1]._)
-              .trim()
-              .split(" ");
+        const root = cheerio.load(resultXml);
+        const listItems = root("li");
 
-            return {
-              projectName: item.a[0]._,
-              location: item.a[0].$.href,
-              projectId: item.a[0].$.href.substring(14),
-              eventName: eventName,
-              user: {
-                name: removeGarbage(item.span[0].a[0]._),
-                location: item.span[0].a[0].$.href,
-              },
-              category: {
-                name: item.span[0].a[1]._,
-                location: item.span[0].a[1].$.href,
-              },
-              hearts: hearts,
-              stars: stars,
-            };
-          });
-          resolve(projects);
+        const projects = listItems.map((index, item) => {
+          const projectName = root(".title", item).text().trim();
+          const location = root(".title", item).attr("href").trim();
+          const projectId = location.substring("/dk30/project/".length).trim();
+          const userName = root(".owner", item).text().trim();
+          const userLocation = root(".owner", item).attr("href").trim();
+          const categoryName = root(".category", item).text().trim();
+          const categoryLocation = root(".category", item).attr("href").trim();
+          const stats = root(".stats", item).text().trim().split(" ");
+          const hearts = stats[0];
+          const stars = stats[1];
+
+          return {
+            projectName: projectName,
+            location: location,
+            projectId: projectId,
+            eventName: settings.currentDK30,
+            user: {
+              name: userName,
+              location: userLocation,
+            },
+            category: {
+              name: categoryName,
+              location: categoryLocation,
+            },
+            hearts: hearts,
+            stars: stars,
+          };
         });
+
+        resolve(projects);
       })
       .catch((error) => reject(error));
   });
