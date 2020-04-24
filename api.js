@@ -7,9 +7,7 @@ const removeGarbage = (str) => {
 
 export function fetchProject(projectId) {
   return new Promise((resolve, reject) => {
-    console.log(projectId);
     const uri = "https://day9.tv/dk30/project/" + projectId;
-    console.log(uri);
     fetch(uri, {
       redirect: "follow",
     })

@@ -12,13 +12,13 @@ const ProjectList = ({ navigation }) => {
     endReachedHandler,
     loadingAdditionalProjects,
     searchHandler,
-    searchString,
+    searchString
   } = useContext(AppContext);
 
   const onPressHandler = ({ event, data }) => {
     if (event == "project") {
       navigation.navigate("ProjectDetails", {
-        projectId: "5e97e84a8372be7737bb2a2c",
+        projectId: "5e97e84a8372be7737bb2a2c"
       }); //data.projectId });
     } else {
       Alert.alert(data);
@@ -37,7 +37,7 @@ const ProjectList = ({ navigation }) => {
             height: 100,
             borderWidth: 2,
             margin: 10,
-            padding: 10,
+            padding: 10
           }}
           onChangeText={searchHandler}
           value={searchString}
@@ -64,8 +64,8 @@ const ProjectList = ({ navigation }) => {
 const styles = StyleSheet.create({
   content: {
     flex: 1,
-    backgroundColor: colors.background,
-  },
+    backgroundColor: colors.background
+  }
 });
 
 export default ProjectList;
