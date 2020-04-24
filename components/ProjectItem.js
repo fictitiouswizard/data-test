@@ -35,7 +35,7 @@ class ProjectItem extends React.PureComponent {
               style={{ color: colors.day9Orange }}
               icon={faUserCircle}
             />
-            <Text style={{ color: colors.day9Orange }}>
+            <Text style={{ color: colors.day9Orange, marginLeft: 5 }}>
               {project.user.name}
             </Text>
           </TouchableOpacity>
@@ -48,14 +48,16 @@ class ProjectItem extends React.PureComponent {
                 style={{ color: colors.day9Orange }}
                 icon={faHashtag}
               />
-              <Text style={{ color: colors.day9Orange }}>
+              <Text style={{ color: colors.day9Orange, marginLeft: 5 }}>
                 {project.category.name}
               </Text>
             </TouchableOpacity>
           </View>
           <View style={{ ...styles.iconView, marginRight: "auto" }}>
             <FontAwesomeIcon style={{ color: colors.text }} icon={faCalendar} />
-            <Text style={{ color: colors.text }}>{project.eventName}</Text>
+            <Text style={{ color: colors.text, marginLeft: 5 }}>
+              {project.eventName}
+            </Text>
           </View>
           <View style={{ flexDirection: "row" }}>
             <View style={styles.iconView}>

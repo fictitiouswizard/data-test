@@ -26,14 +26,14 @@ export function fetchProject(projectId) {
           "#view-project > div > div > div > div > div.col-12.col-md-8 > div.card.padding-25.margin-bottom-25";
         const updateCardSelector = ".update-card";
         const root = cheerio.load(responseText);
-        const projectName = root(nameSelector).text();
-        const user = root(userSelector).text();
-        const category = root(categorySelector).text();
-        const event = settings.currentDK30;
-        const banner = root(eventSelector).text().split(" ");
-        const hearts = banner[banner.length - 2];
-        const stars = banner[banner.length - 1];
-        const description = root(descriptionSelector).html();
+        const projectName = root(nameSelector).text().trim();
+        const user = root(userSelector).text().trim();
+        const category = root(categorySelector).text().trim();
+        const event = settings.currentDK30.trim();
+        const banner = root(eventSelector).text().trim().split(" ");
+        const hearts = banner[banner.length - 2].trim();
+        const stars = banner[banner.length - 1].trim();
+        const description = root(descriptionSelector).html().trim();
         const updateCardElements = root(updateCardSelector);
 
         let updateCards = [];
@@ -47,18 +47,18 @@ export function fetchProject(projectId) {
               );
               const timeSpan = root("div.meta.clearfix", element)
                 .text()
-                .substring(user.length);
+                .substring(user.length + 1);
               const content = root(
                 "div.clear.margin-top-15.margin-bottom-15",
                 element
               ).html();
               return {
                 user: {
-                  name: username,
-                  location: userLocation,
+                  name: username.trim(),
+                  location: userLocation.trim(),
                 },
-                timeSpan: timeSpan,
-                content: content,
+                timeSpan: timeSpan.trim(),
+                content: content.trim(),
               };
             })
             .toArray();
